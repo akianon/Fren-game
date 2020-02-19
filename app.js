@@ -9,42 +9,75 @@ app.use('/client',express.static(__dirname+'/client'));
 
 serv.listen(2000);
 
-console.log("Server started.");
+console.log("Server started on "+new Date().toISOString());
 
 var SOCKET_LIST = {};
 var PLAYER_LIST = {};
 var DEBUG = true;
-var Player = function(id){
-    var self = {
-        x:250,
-        y:250,
-        id:id,
-        number:Math.floor(10 * Math.random()),
-        pressingRight:false,
-        pressingLeft:false,
-        pressingUp:false,
-        pressingDown:false,
-        maxSpd:10,
-        currentWorld:1,
-        sprite:{
-            head:1,
-            body:1,
-            legs:1
-        }
-    }
-    self.updatePosition = function(){
-        if(self.pressingRight)
-            self.x+=self.maxSpd;
-        if(self.pressingLeft)
-            self.x -= self.maxSpd;
-        if(self.pressingUp)
-            self.y -= self.maxSpd;
-        if(self.pressingDown)
-            self.y += self.maxSpd;
-    }
-    
-    return self;
-}
+
+class Player{
+
+	constructor(x,y,id,sprite){
+
+		this.x = x;
+		this.y = y;
+		this.id = id;
+		this.number = new Date().getTime()+id;
+
+		this.direction = {
+
+			pressingRight:false,
+			pressingLeft:false,
+        		pressingUp:false,
+        		pressingDown:false
+
+        	}//this.direction = {
+		
+		//console.log(this.direction);
+		
+		this.maxSpd = 10;
+        	this.currentWorld = 1;
+
+        	this.sprite = {	//Placeholder
+
+            		head:1,
+            		body:1,
+            		legs:1
+
+        	}//this.sprite = {
+
+	}//constructor(){
+
+	updatePosition(){
+
+        	if(this.direction.pressingRight) this.x += this.maxSpd;
+        	if(this.direction.pressingLeft) this.x -= this.maxSpd;
+        	if(this.direction.pressingUp) this.y -= this.maxSpd;
+        	if(this.direction.pressingDown) this.y += this.maxSpd;
+
+	}//updatePosition(){
+
+}//class Player{
+
+class ClientPlayer extends Player{
+	
+	constructor(x,y,id,sprite){
+	
+		super(x,y,id,sprite);
+	
+	}//constructor(x,y,id,sprite){
+	
+}//class ClientPlayer{
+
+class ServerPlayer extends Player{
+	
+	constructor(x,y,id,sprite){
+		
+		super(x,y,id,sprite);
+		
+	}//constructor(x,y,id,sprite){
+	
+}//class ServerPlayer{
 
 var map={};
 var ground = new Array(20).fill(new Array(32).fill(0));	//32-position, 20-height
@@ -52,21 +85,25 @@ var ground = new Array(20).fill(new Array(32).fill(0));	//32-position, 20-height
 map[1] = ground;
 
 var io = require('socket.io')(serv,{});
+
 io.sockets.on('connection', function(socket){
-    console.log('socket connection');
-    socket.id = Math.random();
-    socket.x = 0;
-    socket.y = 0;
-[]
-    SOCKET_LIST[socket.id] = socket;
+	
+	console.log('socket connection');
+	socket.id = Math.random();
+	socket.x = 0;
+	socket.y = 0;
+	
+	SOCKET_LIST[socket.id] = socket;
     
-    var player = Player(socket.id);
-    PLAYER_LIST[socket.id] = player;
+	var player = new Player(250,250,socket.id,{});
+	
+	PLAYER_LIST[socket.id] = player;
     
     
-    socket.on('disconnect',function(){
-        delete SOCKET_LIST[socket.id];
-        delete PLAYER_LIST[socket.id];
+	socket.on('disconnect',function(){
+	
+	delete SOCKET_LIST[socket.id];
+	delete PLAYER_LIST[socket.id];
 
     });
     
@@ -94,13 +131,13 @@ io.sockets.on('connection', function(socket){
     
     socket.on('keyPress',function(data){
        if(data.inputId === 'left')
-           player.pressingLeft = data.state;
+           player.direction.pressingLeft = data.state;
        else if(data.inputId === 'right')
-           player.pressingRight = data.state;
+           player.direction.pressingRight = data.state;
        else if(data.inputId === 'up')
-           player.pressingUp = data.state;
+           player.direction.pressingUp = data.state;
        else if(data.inputId === 'down')
-           player.pressingDown = data.state;
+           player.direction.pressingDown = data.state;
     });
 
     
