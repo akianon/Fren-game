@@ -1,6 +1,7 @@
 var express = require('express');
 var app = express();
-var serv= require('http').Server(app);
+var serv = require('http').Server(app);
+var Player = require('./res/Player.js');
 
 app.get('/',function(req,res){
     res.sendFile(__dirname+'/client/index.html');
@@ -14,70 +15,6 @@ console.log("Server started on "+new Date().toISOString());
 var SOCKET_LIST = {};
 var PLAYER_LIST = {};
 var DEBUG = true;
-
-class Player{
-
-	constructor(x,y,id,sprite){
-
-		this.x = x;
-		this.y = y;
-		this.id = id;
-		this.number = new Date().getTime()+id;
-
-		this.direction = {
-
-			pressingRight:false,
-			pressingLeft:false,
-        		pressingUp:false,
-        		pressingDown:false
-
-        	}//this.direction = {
-		
-		//console.log(this.direction);
-		
-		this.maxSpd = 10;
-        	this.currentWorld = 1;
-
-        	this.sprite = {	//Placeholder
-
-            		head:1,
-            		body:1,
-            		legs:1
-
-        	}//this.sprite = {
-
-	}//constructor(){
-
-	updatePosition(){
-
-        	if(this.direction.pressingRight) this.x += this.maxSpd;
-        	if(this.direction.pressingLeft) this.x -= this.maxSpd;
-        	if(this.direction.pressingUp) this.y -= this.maxSpd;
-        	if(this.direction.pressingDown) this.y += this.maxSpd;
-
-	}//updatePosition(){
-
-}//class Player{
-
-class ClientPlayer extends Player{
-	
-	constructor(x,y,id,sprite){
-	
-		super(x,y,id,sprite);
-	
-	}//constructor(x,y,id,sprite){
-	
-}//class ClientPlayer{
-
-class ServerPlayer extends Player{
-	
-	constructor(x,y,id,sprite){
-		
-		super(x,y,id,sprite);
-		
-	}//constructor(x,y,id,sprite){
-	
-}//class ServerPlayer{
 
 var map={};
 var ground = new Array(20).fill(new Array(32).fill(0));	//32-position, 20-height
