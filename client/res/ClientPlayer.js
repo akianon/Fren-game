@@ -56,7 +56,11 @@ class Player{
 
 	}//constructor(){
 		
-	toPlayer(player){}
+	toPlayer(){
+		
+		return Object.assign(new Player(),this);
+		
+	}//toPlayer(player){
 
 }//class Player{
 
@@ -81,26 +85,15 @@ class ClientPlayer extends Player{
 	 *Constructs a new ClientPlayer
 	 *
 	 *Arguments:
-	 *	player: The Player object to inherit
+	 *	   x: The x-coordinate of the player.
+	 *	   y: The y-coordinate of the player.
+	 *	  id: The socket ID of the player.
+	 *sprite: The sprite values of the player.
 	 */
-	constructor(player){
-		
-		super();
-		
-		this.x = player.x;
-		this.y = player.y;
-		this.id = player.id;
-		this.number = player.number;
+	constructor(x,y,id,sprite){
 
-		this.direction = player.direction;
-		
-		//console.log(this.direction);
-		
-		this.maxSpd = player.maxSpd;
-        this.currentWorld = player.currentWorld;
+		super(x,y,id,sprite);
 
-        this.sprite = player.sprite;
-	
 	}//constructor(x,y,id,sprite){
 	
 	/*draw()
@@ -108,7 +101,7 @@ class ClientPlayer extends Player{
 	 */
 	draw(ctx,sprite){
 	
-		var tileSize = 64;
+		var tileSize = 64;	//Size of player
 		var imageNumTiles = 7; // The number of tiles per row in the tileset image
 		var frame = frame;
 

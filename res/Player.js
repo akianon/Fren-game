@@ -58,7 +58,7 @@ module.exports = class Player{
 		
 	toPlayer(){
 		
-		return new Player(this.x,this.y,this.id,this.sprite);
+		return Object.assign(new Player(),this);
 		
 	}//toPlayer(player){
 

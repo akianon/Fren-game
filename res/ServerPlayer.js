@@ -21,23 +21,15 @@ module.exports = class ServerPlayer extends Player{
 	 *Constructs a new ServerPlayer
 	 *
 	 *Arguments:
-	 *	player: The Player object to inherit
+	 *	   x: The x-coordinate of the player.
+	 *	   y: The y-coordinate of the player.
+	 *	  id: The socket ID of the player.
+	 *sprite: The sprite values of the player.
 	 */
-	constructor(player){
-		
-		super(player.x,player.y,player.id,player.sprite);
-	
-		this.number = player.number;
+	constructor(x,y,id,sprite){
 
-		this.direction = {...player.direction};
-		
-		//console.log(this.direction);
-		
-		this.maxSpd = player.maxSpd;
-        this.currentWorld = player.currentWorld;
+		super(x,y,id,sprite);
 
-        this.sprite = player.sprite;
-	
 	}//constructor(x,y,id,sprite){
 	
 	/*updatePosition()
