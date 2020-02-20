@@ -14,7 +14,7 @@ var socket = io();
 var chatFocused = false;
 var world = [];
 var player={};
-var PLAYER_LIST = {};
+var PLAYER_LIST = [];
 
 var chatText = document.getElementById('chat-text');
 var chatInput = document.getElementById('chat-input');
@@ -66,13 +66,14 @@ var imageNumTiles = 10;  // The number of tiles per row in the tileset image
    }
 }
 
-socket.on("newPositions",function(data){
-//console.log(data);   
-	for(i in data){	
-		var player = new ClientPlayer(i);
-		PLAYER_LIST[i.id] = i;
+socket.on('newPositions',function(data){
+	//console.log(data);
+	data.forEach(function(elem){
+		PLAYER_LIST[elem.id] = elem;
+		var player = Object.assign(new ClientPlayer(),elem);
+		console.log(player);
 		player.draw(ctx,femaleSpriteSheet);
-	}//for(i in data){
+	});
 });
     
  
@@ -88,7 +89,7 @@ socket.on("newPositions",function(data){
     socket.on("worldUpdate",function(data){
     loaded = true;
       world = data;
-      console.log(data);
+      //console.log(data);
       drawGround();
     });
     
