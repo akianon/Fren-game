@@ -14,7 +14,7 @@
  *Known subclasses: ClientPlayer,ServerPlayer
  */
 
-module.exports = class Player{
+class Player{
 	
 	/*Player(int x,int y,int id,Sprite sprite)
 	 *Constructs a new Player
@@ -56,10 +56,6 @@ module.exports = class Player{
 
 	}//constructor(){
 		
-	toPlayer(){
-		
-		return new Player(this.x,this.y,this.id,this.sprite);
-		
-	}//toPlayer(player){
+	toPlayer(player){}
 
 }//class Player{
