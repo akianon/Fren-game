@@ -11,7 +11,7 @@ app.use('/client',express.static(__dirname+'/client'));
 
 serv.listen(2000);
 
-log('Server started on '+new Date().toISOString());
+log('Server started on '+new Date().toString());
 
 var SOCKET_LIST = [];
 var PLAYER_LIST = [];
@@ -26,7 +26,8 @@ var io = require('socket.io')(serv,{});
 
 io.sockets.on('connection', function(socket){
 	
-	socket.id = new Date().getTime();
+	console.log(JSON.stringify(SOCKET_LIST));
+	socket.id = (SOCKET_LIST.indexOf()>=0)?SOCKET_LIST.indexOf():SOCKET_LIST.length;
 	log('New socket connection '+socket.id);
 	socket.x = 0;
 	socket.y = 0;
@@ -50,7 +51,7 @@ io.sockets.on('connection', function(socket){
     socket.on('sendMsgToServer',function(data){
         var playerName = ("" + socket.id).slice(2,7);
         for(var i in SOCKET_LIST){
-            SOCKET_LIST[i].emit('addToChat',playerName + ": " +data);
+			SOCKET_LIST[i].emit('addToChat',playerName + ": " +data);
         }
     });
     
@@ -69,14 +70,14 @@ io.sockets.on('connection', function(socket){
     });
     
     socket.on('keyPress',function(data){
-       if(data.inputId === 'left')
-           player.direction.pressingLeft = data.state;
-       else if(data.inputId === 'right')
-           player.direction.pressingRight = data.state;
-       else if(data.inputId === 'up')
-           player.direction.pressingUp = data.state;
-       else if(data.inputId === 'down')
-           player.direction.pressingDown = data.state;
+		if(data.inputId === 'left')
+			player.direction.pressingLeft = data.state;
+		else if(data.inputId === 'right') 
+			player.direction.pressingRight = data.state;
+		else if(data.inputId === 'up')
+			player.direction.pressingUp = data.state;
+		else if(data.inputId === 'down')
+			player.direction.pressingDown = data.state;
     });
 
     
@@ -85,19 +86,17 @@ io.sockets.on('connection', function(socket){
 
 setInterval(function(){
     var pack =[];
-    for(var i in PLAYER_LIST){
-        var player = new ServerPlayer(i);
+    PLAYER_LIST.forEach(function(elem){
+		var player = Object.assign(new ServerPlayer(),elem);
         player.updatePosition();
         pack.push(player.toPlayer());
-    }
-    for(var i in SOCKET_LIST){
-        var socket = SOCKET_LIST[i];
-        socket.emit('newPositions',pack);
-    }
-    
+	});
+	
+	//console.log(pack);
+    SOCKET_LIST.forEach(function(elem){elem.emit('newPositions',pack);});
         
 },1000/25);
 
 function log(string){
-	console.log(new Date().toGMTString()+': '+string);
+	console.log(new Date().toISOString()+': '+string);
 }//log(string){
