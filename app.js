@@ -2,6 +2,7 @@ var express = require('express');
 var app = express();
 var serv = require('http').Server(app);
 var Player = require('./res/Player.js');
+var ServerPlayer = require('./res/ServerPlayer.js');
 
 app.get('/',function(req,res){
     res.sendFile(__dirname+'/client/index.html');
@@ -10,14 +11,14 @@ app.use('/client',express.static(__dirname+'/client'));
 
 serv.listen(2000);
 
-console.log("Server started on "+new Date().toISOString());
+log('Server started on '+new Date().toISOString());
 
-var SOCKET_LIST = {};
-var PLAYER_LIST = {};
+var SOCKET_LIST = [];
+var PLAYER_LIST = [];
 var DEBUG = true;
 
-var map={};
-var ground = new Array(20).fill(new Array(32).fill(0));	//32-position, 20-height
+var map=[];
+var ground = new Array(20).fill(new Array(32).fill(0));	//Makes 2D array of 32-position, 20-height
 
 map[1] = ground;
 
@@ -25,8 +26,8 @@ var io = require('socket.io')(serv,{});
 
 io.sockets.on('connection', function(socket){
 	
-	console.log('socket connection');
-	socket.id = Math.random();
+	socket.id = new Date().getTime();
+	log('New socket connection '+socket.id);
 	socket.x = 0;
 	socket.y = 0;
 	
@@ -39,8 +40,10 @@ io.sockets.on('connection', function(socket){
     
 	socket.on('disconnect',function(){
 	
-	delete SOCKET_LIST[socket.id];
-	delete PLAYER_LIST[socket.id];
+		log('Socket '+socket.id+' disconnect');
+	
+		delete SOCKET_LIST[socket.id];
+		delete PLAYER_LIST[socket.id];
 
     });
     
@@ -52,18 +55,17 @@ io.sockets.on('connection', function(socket){
     });
     
      socket.on('requestWorld',function(data){
-  //  console.log(map[1]);
-         console.log('sending world '+ PLAYER_LIST[socket.id].currentWorld);
-      socket.emit('worldUpdate',map[PLAYER_LIST[socket.id].currentWorld]);
-      console.log();
+		//console.log(map[1]);
+		log('Sending world ' + PLAYER_LIST[socket.id].currentWorld + ' to ' + socket.id);
+		socket.emit('worldUpdate',map[PLAYER_LIST[socket.id].currentWorld]);
     });
     
     socket.on('evalServer',function(data){
-         if(!DEBUG){
-             return;
-         }
-         var res = eval(data);
-         socket.emit('evalAnswer',res);
+		if(!DEBUG){
+			return;
+		}
+		var res = eval(data);
+		socket.emit('evalAnswer',res);
     });
     
     socket.on('keyPress',function(data){
@@ -84,14 +86,9 @@ io.sockets.on('connection', function(socket){
 setInterval(function(){
     var pack =[];
     for(var i in PLAYER_LIST){
-        var player = PLAYER_LIST[i];
+        var player = new ServerPlayer(i);
         player.updatePosition();
-        pack.push({
-            p:player,
-            x:player.x,
-            y:player.y,
-            number:player.number
-    });
+        pack.push(player.toPlayer());
     }
     for(var i in SOCKET_LIST){
         var socket = SOCKET_LIST[i];
@@ -100,3 +97,7 @@ setInterval(function(){
     
         
 },1000/25);
+
+function log(string){
+	console.log(new Date().toGMTString()+': '+string);
+}//log(string){

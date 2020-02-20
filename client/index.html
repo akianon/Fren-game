@@ -7,19 +7,21 @@
 <form id="chat-form">
 <input id="chat-input" type=text" style="position:absolute;top:700px;width:500px"></input>
 </form>
+<script src="client/res/ClientPlayer.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
 <script>
-
 var socket = io();
 var chatFocused = false;
 var world = [];
 var player={};
 var PLAYER_LIST = {};
+
 var chatText = document.getElementById('chat-text');
 var chatInput = document.getElementById('chat-input');
 var chatForm = document.getElementById('chat-form');
 var ctx = document.getElementById("ctx").getContext("2d");
 var bg = document.getElementById("background").getContext("2d");
+
 chatInput.addEventListener("focus", function(){chatFocused = true}, true);
 chatInput.addEventListener("blur", function(){chatFocused = false}, true);
 
@@ -31,70 +33,21 @@ var loaded = false;
 ctx.font = '30px Arial';
 tilesetImage.src = 'client/tilesheet.png';
 femaleSpriteSheet.src = 'client/avatars/Base-Female.png';
-var Player = function(id){
-    var self = {
-        x:250,
-        y:250,
-        id:id,
-        number:Math.floor(10 * Math.random()),
-        pressingRight:false,
-        pressingLeft:false,
-        pressingUp:false,
-        pressingDown:false,
-        maxSpd:10,
-        currentWorld:1,
-        frame:0,
-        sprite:{
-            head:1,
-            body:1,
-            legs:1
-        }
-    }
-    self.draw = function(){
-        
-    }
-    
-    return self;
-}
 tilesetImage.onload = requestWorld();
 //requestWorld(1);
 
 
-function requestWorld( w){
-socket.emit('requestWorld',w);
-
-}
+function requestWorld(w){
+	socket.emit('requestWorld',w);
+}//requestWorld(w){
 
 function loop(){
-setInterval(function(){
+	setInterval(function(){
 
-},1000/25);
-}
-function drawCharacter(data){
-var ctx = document.getElementById("ctx").getContext("2d");
-
-
-var tileSize = 64;       // The size of a tile (32×32)
-var imageNumTiles = 7;  // The number of tiles per row in the tileset image
-var frame = 3;
-
- ctx.clearRect(0,0,500,500);
-  var tileRow = (frame / imageNumTiles) | 0; // Bitwise OR operation
-  var tileCol = (frame % imageNumTiles) | 0;
-//console.log(data);
-
-    for(var i =0; i<data.length;i++){
-
-//ctx.fillText(data[i].number,data[i].x,data[i].y);
-         ctx.drawImage(femaleSpriteSheet, (tileCol * tileSize), (tileRow* tileSize), tileSize, tileSize, (data[i].x ), (data[i].y), tileSize, tileSize);
-        // ctx.drawImage(femaleSpriteSheet,data[i].x,data[i].y);
-        // console.log(data);
-    }
+	},1000/25);
 }
 
 function drawGround(){
-var ctx = document.getElementById("ctx").getContext("2d");
-var bg = document.getElementById("background").getContext("2d");
 
 var tileSize = 32;       // The size of a tile (32×32)
 var rowTileCount = 20;   // The number of tiles in a row of our background
@@ -115,11 +68,12 @@ var imageNumTiles = 10;  // The number of tiles per row in the tileset image
 
 socket.on("newPositions",function(data){
 //console.log(data);   
-    for(var i =0; i<data.length;i++){
-    PLAYER_LIST[data[i].p.id] = data[i].p;
-    }
-   drawCharacter(data);
-    });
+	for(i in data){	
+		var player = new ClientPlayer(i);
+		PLAYER_LIST[i.id] = i;
+		player.draw(ctx,femaleSpriteSheet);
+	}//for(i in data){
+});
     
  
     
