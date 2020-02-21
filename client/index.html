@@ -15,7 +15,7 @@ var chatFocused = false;
 var world = [];
 var player={};
 var PLAYER_LIST = [];
-
+var keyPresses = [false,false,false,false];
 var chatText = document.getElementById('chat-text');
 var chatInput = document.getElementById('chat-input');
 var chatForm = document.getElementById('chat-form');
@@ -43,7 +43,8 @@ function requestWorld(w){
 
 function loop(){
 	setInterval(function(){
-
+       socket.emit('keyPress',keyPresses);
+      // console.log(keyPresses);
 	},1000/25);
 }
 
@@ -105,27 +106,27 @@ socket.on('newPositions',function(data){
     }
     document.onkeydown = function(event){
     if(!chatFocused){
-        if(event.keyCode==68)
-            socket.emit('keyPress',[,true]);
-        else if(event.keyCode==83)
-            socket.emit('keyPress',[,,,true]);
-        else if(event.keyCode==65)
-            socket.emit('keyPress',[true]);
-        else if(event.keyCode==87)
-            socket.emit('keyPress',[,,true]);
+         if(event.keyCode==68)
+            keyPresses[1] = true;
+         else if(event.keyCode==65)
+            keyPresses[0] = true;
+         if(event.keyCode==83)
+            keyPresses[3] = true;
+         else if(event.keyCode==87)
+            keyPresses[2] = true;
                
         }
         }
     document.onkeyup = function(event){
         if(!chatFocused){
         if(event.keyCode==68)
-            socket.emit('keyPress',[,false]);
-        else if(event.keyCode==83)
-            socket.emit('keyPress',[,,,false]);
+           keyPresses[1] = false;
         else if(event.keyCode==65)
-            socket.emit('keyPress',[false]);
-        else if(event.keyCode==87)
-            socket.emit('keyPress',[,,false]);
+           keyPresses[0] = false;
+        if(event.keyCode==83)
+           keyPresses[3] = false;
+       else if(event.keyCode==87)
+           keyPresses[2] = false;
               } 
         }
 loop();
