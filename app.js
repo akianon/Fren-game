@@ -83,8 +83,12 @@ setInterval(function(){
     var pack =[];
     PLAYER_LIST.forEach(function(elem){
 		var player = Object.assign(new ServerPlayer(),elem);
-        player.updatePosition();
+        //log( player.updatePosition().x);
+        elem = player.updatePosition();
         pack.push(player.toPlayer());
+        
+        Object.assign(PLAYER_LIST[elem.id],elem); //TODO fix crash with PLAYER_LIST[elem.id] undefined on disconnect. 
+        
 	});
 	
 	//console.log(pack);
