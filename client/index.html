@@ -43,9 +43,33 @@ function requestWorld(w){
 
 function loop(){
 	setInterval(function(){
-       socket.emit('keyPress',keyPresses);
-      // console.log(keyPresses);
+		
+		socket.emit('keyPress',keyPresses);
+		// console.log(keyPresses);
+		draw();
+		
 	},1000/25);
+}
+
+function draw(){
+	
+	ctx.clearRect(0, 0, 500, 500);
+	
+	//drawGround();
+	drawPlayers();
+	
+}
+
+function drawPlayers(){
+	
+	PLAYER_LIST.forEach(function(elem){
+		
+		var player = Object.assign(new ClientPlayer(),elem);
+		
+		player.draw(ctx,femaleSpriteSheet);
+		
+	});//data.forEach(
+	
 }
 
 function drawGround(){
@@ -69,12 +93,19 @@ var imageNumTiles = 10;  // The number of tiles per row in the tileset image
 
 socket.on('newPositions',function(data){
 	//console.log(data);
+	
+	
+	
 	data.forEach(function(elem){
+		
 		PLAYER_LIST[elem.id] = elem;
+		
 		var player = Object.assign(new ClientPlayer(),elem);
+		
 		player.draw(ctx,femaleSpriteSheet);
-	});
-});
+		
+	});//data.forEach(
+});//socket.on('newPositions',
     
  
     
@@ -104,31 +135,33 @@ socket.on('newPositions',function(data){
         chatInput.blur();
 
     }
-    document.onkeydown = function(event){
+    document.onkeydown = function(event){	//0L, 1R, 2U, 3D
     if(!chatFocused){
-         if(event.keyCode==68)
-            keyPresses[1] = true;
-         else if(event.keyCode==65)
-            keyPresses[0] = true;
-         if(event.keyCode==83)
-            keyPresses[3] = true;
-         else if(event.keyCode==87)
-            keyPresses[2] = true;
-               
-        }
-        }
+		if(event.keyCode == 68)	//Left/right exclusive
+			keyPresses[1] = true;
+		else if(event.keyCode == 65)
+			keyPresses[0] = true;
+		if(event.keyCode == 83)	//Up/down exclusive
+			keyPresses[3] = true;
+		else if(event.keyCode == 87)
+			keyPresses[2] = true;
+		
+        }//if(!chatFocused){
+	}//function(event){
+		
     document.onkeyup = function(event){
-        if(!chatFocused){
-        if(event.keyCode==68)
-           keyPresses[1] = false;
-        else if(event.keyCode==65)
-           keyPresses[0] = false;
-        if(event.keyCode==83)
-           keyPresses[3] = false;
-       else if(event.keyCode==87)
-           keyPresses[2] = false;
-              } 
-        }
+	if(!chatFocused){
+		if(event.keyCode == 68)
+			keyPresses[1] = false;
+		else if(event.keyCode == 65)
+			keyPresses[0] = false;
+		if(event.keyCode == 83)
+			keyPresses[3] = false;
+		else if(event.keyCode == 87)
+			keyPresses[2] = false;
+		}//if(!ChatFocused){ 
+	}//function(event){
+	
 loop();
 
 </script>

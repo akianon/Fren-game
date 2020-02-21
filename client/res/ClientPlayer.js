@@ -105,7 +105,6 @@ class ClientPlayer extends Player{
 		var imageNumTiles = 7; // The number of tiles per row in the tileset image
 		var frame = frame;
 
-		//ctx.clearRect(0, 0, 500, 500);
 		var tileRow = (frame / imageNumTiles) | 0; // Bitwise OR operation
 		var tileCol = (frame % imageNumTiles) | 0;
 		
