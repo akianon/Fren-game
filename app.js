@@ -26,8 +26,7 @@ var io = require('socket.io')(serv,{});
 
 io.sockets.on('connection', function(socket){
 	
-	console.log(JSON.stringify(SOCKET_LIST));
-	socket.id = (SOCKET_LIST.indexOf()>=0)?SOCKET_LIST.indexOf():SOCKET_LIST.length;
+	socket.id = SOCKET_LIST.length;
 	log('New socket connection '+socket.id);
 	socket.x = 0;
 	socket.y = 0;
@@ -43,8 +42,8 @@ io.sockets.on('connection', function(socket){
 	
 		log('Socket '+socket.id+' disconnect');
 	
-		delete SOCKET_LIST[socket.id];
-		delete PLAYER_LIST[socket.id];
+		SOCKET_LIST.splice(socket.id,1);
+		PLAYER_LIST.splice(socket.id,1);
 
     });
     
@@ -69,15 +68,11 @@ io.sockets.on('connection', function(socket){
 		socket.emit('evalAnswer',res);
     });
     
-    socket.on('keyPress',function(data){
-		if(data.inputId === 'left')
-			player.direction.pressingLeft = data.state;
-		else if(data.inputId === 'right') 
-			player.direction.pressingRight = data.state;
-		else if(data.inputId === 'up')
-			player.direction.pressingUp = data.state;
-		else if(data.inputId === 'down')
-			player.direction.pressingDown = data.state;
+    socket.on('keyPress',function(data){	//0L,1R,2U,3D
+			player.direction.pressingLeft = data[0] || false;
+			player.direction.pressingRight = data[1] || false;
+			player.direction.pressingUp = data[2] || false;
+			player.direction.pressingDown = data[3] || false;
     });
 
     

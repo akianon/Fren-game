@@ -71,7 +71,6 @@ socket.on('newPositions',function(data){
 	data.forEach(function(elem){
 		PLAYER_LIST[elem.id] = elem;
 		var player = Object.assign(new ClientPlayer(),elem);
-		console.log(player);
 		player.draw(ctx,femaleSpriteSheet);
 	});
 });
@@ -107,26 +106,26 @@ socket.on('newPositions',function(data){
     document.onkeydown = function(event){
     if(!chatFocused){
         if(event.keyCode==68)
-            socket.emit('keyPress',{inputId:'right',state:true});
+            socket.emit('keyPress',[,true]);
         else if(event.keyCode==83)
-            socket.emit('keyPress',{inputId:'down',state:true});
+            socket.emit('keyPress',[,,,true]);
         else if(event.keyCode==65)
-            socket.emit('keyPress',{inputId:'left',state:true});
+            socket.emit('keyPress',[true]);
         else if(event.keyCode==87)
-            socket.emit('keyPress',{inputId:'up',state:true});
+            socket.emit('keyPress',[,,true]);
                
         }
         }
     document.onkeyup = function(event){
         if(!chatFocused){
         if(event.keyCode==68)
-            socket.emit('keyPress',{inputId:'right',state:false});
+            socket.emit('keyPress',[,false]);
         else if(event.keyCode==83)
-            socket.emit('keyPress',{inputId:'down',state:false});
+            socket.emit('keyPress',[,,,false]);
         else if(event.keyCode==65)
-            socket.emit('keyPress',{inputId:'left',state:false});
+            socket.emit('keyPress',[false]);
         else if(event.keyCode==87)
-            socket.emit('keyPress',{inputId:'up',state:false});
+            socket.emit('keyPress',[,,false]);
               } 
         }
 loop();
