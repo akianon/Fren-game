@@ -3,6 +3,7 @@ var app = express();
 var serv = require('http').Server(app);
 var Player = require('./res/Player.js');
 var ServerPlayer = require('./res/ServerPlayer.js');
+var EnhancedArray = require('./res/EnhancedArray.js');
 
 app.get('/',function(req,res){
     res.sendFile(__dirname+'/client/index.html');
@@ -26,7 +27,7 @@ var io = require('socket.io')(serv,{});
 
 io.sockets.on('connection', function(socket){
 	
-	socket.id = SOCKET_LIST.length;
+	socket.id = Object.assign(new EnhancedArray(),SOCKET_LIST).firstFree();
 	log('New socket connection '+socket.id);
 	socket.x = 0;
 	socket.y = 0;
@@ -41,9 +42,9 @@ io.sockets.on('connection', function(socket){
 	socket.on('disconnect',function(){
 	
 		log('Socket '+socket.id+' disconnect');
-	
-		SOCKET_LIST.splice(socket.id,1);
-		PLAYER_LIST.splice(socket.id,1);
+		
+		delete SOCKET_LIST[socket.id];
+		delete PLAYER_LIST[socket.id];
 
     });
     
@@ -82,13 +83,11 @@ io.sockets.on('connection', function(socket){
 setInterval(function(){
     var pack =[];
     PLAYER_LIST.forEach(function(elem){
-		var player = Object.assign(new ServerPlayer(),elem);
-        //log( player.updatePosition().x);
-        elem = player.updatePosition();
-        pack.push(player.toPlayer());
+			elem = (Object.assign(new ServerPlayer(),elem).updatePosition()).toPlayer();	//Hacky, solution. Sets player to ServerPlayer, updates position, and returns original player in one line
+			//log( player.updatePosition().x);
+			pack.push(elem);
         
-        Object.assign(PLAYER_LIST[elem.id],elem); //TODO fix crash with PLAYER_LIST[elem.id] undefined on disconnect. 
-        
+			Object.assign(PLAYER_LIST[elem.id],elem);
 	});
 	
 	//console.log(pack);
