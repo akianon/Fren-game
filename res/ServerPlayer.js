@@ -41,7 +41,13 @@ module.exports = class ServerPlayer extends Player{
         if(this.direction.pressingLeft) this.x -= this.maxSpd;
         if(this.direction.pressingUp) this.y -= this.maxSpd;
         if(this.direction.pressingDown) this.y += this.maxSpd;
+        
+        //shorter linewise I think its less efficient though.
+       // this.x += (this.direction.pressingRight- this.direction.pressingLeft) * this.maxSpd;
+       // this.y += (this.direction.pressingDown - this.direction.pressingUp) * this.maxSpd;
+       
 
+        return this;
 	}//updatePosition(){
 	
 }//class ServerPlayer{
