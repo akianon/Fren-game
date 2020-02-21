@@ -3,7 +3,6 @@ var app = express();
 var serv = require('http').Server(app);
 var Player = require('./res/Player.js');
 var ServerPlayer = require('./res/ServerPlayer.js');
-var EnhancedArray = require('./res/EnhancedArray.js');
 
 app.get('/',function(req,res){
     res.sendFile(__dirname+'/client/index.html');
@@ -27,7 +26,8 @@ var io = require('socket.io')(serv,{});
 
 io.sockets.on('connection', function(socket){
 	
-	socket.id = Object.assign(new EnhancedArray(),SOCKET_LIST).firstFree();
+	
+	socket.id = getSocket();
 	log('New socket connection '+socket.id);
 	socket.x = 0;
 	socket.y = 0;
@@ -98,3 +98,9 @@ setInterval(function(){
 function log(string){
 	console.log(new Date().toISOString()+': '+string);
 }//log(string){
+
+function getSocket(){
+	for(var i=0;i<=SOCKET_LIST.length;++i){
+		if(SOCKET_LIST[i]==undefined) return i;
+	}
+}
