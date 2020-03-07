@@ -45,6 +45,9 @@ class Player{
 		
 		this.maxSpd = 10;
         this.currentWorld = 1;
+		
+		this.animFrame = 0;
+		this.directionFrame = 6;
 
         this.sprite = {	//Placeholder
 
@@ -102,11 +105,17 @@ class ClientPlayer extends Player{
 	draw(ctx,sprite){
 	
 		var tileSize = 64;	//Size of player
-		var imageNumTiles = 7; // The number of tiles per row in the tileset image
-		var frame = frame;
-
-		var tileRow = (frame / imageNumTiles) | 0; // Bitwise OR operation
-		var tileCol = (frame % imageNumTiles) | 0;
+		var imageNumTiles = 11; // The number of tiles per row in the tileset image
+		
+		//if(this.direction.pressingUp) this.sprite.frame = 0;
+		//if(this.direction.pressingRight) this.sprite.frame = 3;
+		//if(this.direction.pressingDown) this.sprite.frame = 6;
+		//if(this.direction.pressingLeft) this.sprite.frame = 9;
+		
+		var tileRow = ((this.directionFrame+(this.animFrame)) / imageNumTiles) | 0; // Bitwise OR operation
+		var tileCol = (this.directionFrame % imageNumTiles) | 0;
+		
+		this.animFrame>=3?this.animFrame=0:this.animFrame++;
 		
 		ctx.drawImage(sprite, (tileCol * tileSize), (tileRow * tileSize), tileSize, tileSize, (this.x), (this.y), tileSize, tileSize);
         

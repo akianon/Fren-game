@@ -45,6 +45,9 @@ module.exports = class Player{
 		
 		this.maxSpd = 10;
         this.currentWorld = 1;
+		
+		this.animFrame = 0;
+		this.directionFrame = 6;
 
         this.sprite = {	//Placeholder
 
