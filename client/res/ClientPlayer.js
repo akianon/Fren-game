@@ -32,30 +32,21 @@ class Player{
 		this.id = id;
 		this.number = new Date().getTime()+id;
 
-		this.direction = {
-
-			pressingRight:false,
-			pressingLeft:false,
-        	pressingUp:false,
-        	pressingDown:false
-
-        }//this.direction = {
-		
-		//console.log(this.direction);
+		this.direction = 0;	//0U,1D,2L,3R
 		
 		this.maxSpd = 10;
-        this.currentWorld = 1;
+		this.currentWorld = 1;
 		
 		this.animFrame = 0;
 		this.directionFrame = 6;
 
-        this.sprite = {	//Placeholder
-
-           	head:1,
-           	body:1,
-           	legs:1
-
-        }//this.sprite = {
+		this.sprite = {	//Placeholder
+			
+			head:1,
+			body:1,
+			legs:1
+			
+		}//this.sprite = {
 
 	}//constructor(){
 		

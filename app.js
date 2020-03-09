@@ -48,32 +48,29 @@ io.sockets.on('connection', function(socket){
 
     });
     
-    socket.on('sendMsgToServer',function(data){
+    socket.on(67,function(data){	//67 clientSendMsgToServer
         var playerName = ("" + socket.id).slice(2,7);
         for(var i in SOCKET_LIST){
-			SOCKET_LIST[i].emit('addToChat',playerName + ": " +data);
+			SOCKET_LIST[i].emit(3,playerName + ": " +data);	//3 serverSendMsgToClient
         }
     });
     
-     socket.on('requestWorld',function(data){
+     socket.on(65,function(data){	//65 clientRequestWorld
 		//console.log(map[1]);
 		log('Sending world ' + PLAYER_LIST[socket.id].currentWorld + ' to ' + socket.id);
-		socket.emit('worldUpdate',map[PLAYER_LIST[socket.id].currentWorld]);
+		socket.emit(1,map[PLAYER_LIST[socket.id].currentWorld]);	//1 serverWorldUpdate
     });
     
-    socket.on('evalServer',function(data){
+    socket.on(68,function(data){	//68 clientEvalServer
 		if(!DEBUG){
 			return;
 		}
 		var res = eval(data);
-		socket.emit('evalAnswer',res);
+		socket.emit(4,res);	//4 serverEvalAnswer
     });
     
-    socket.on('keyPress',function(data){	//0L,1R,2U,3D
-			player.direction.pressingLeft = data[0] || false;
-			player.direction.pressingRight = data[1] || false;
-			player.direction.pressingUp = data[2] || false;
-			player.direction.pressingDown = data[3] || false;
+    socket.on(66,function(data){	//66 clientKeyPress	//0U,1D,2L,3R
+			player.direction = data;
     });
 
     
@@ -91,7 +88,7 @@ setInterval(function(){
 	});
 	
 	//console.log(pack);
-    SOCKET_LIST.forEach(function(elem){elem.emit('newPositions',pack);});
+    SOCKET_LIST.forEach(function(elem){elem.emit(2,pack);});	//2 serverNewPositons
         
 },1000/25);
 

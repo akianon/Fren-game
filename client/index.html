@@ -15,7 +15,7 @@ var chatFocused = false;
 var world = [];
 var player={};
 var PLAYER_LIST = [];
-var keyPresses = [false,false,false,false];
+var keyPresses = 0;	//bit 0=u,bit 1=d,bit 2=l,bit 3=r
 var chatText = document.getElementById('chat-text');
 var chatInput = document.getElementById('chat-input');
 var chatForm = document.getElementById('chat-form');
@@ -38,13 +38,13 @@ tilesetImage.onload = requestWorld();
 
 
 function requestWorld(w){
-	socket.emit('requestWorld',w);
+	socket.emit(65,w);	//65 clientRequestWorld
 }//requestWorld(w){
 
 function loop(){
 	setInterval(function(){
 		
-		socket.emit('keyPress',keyPresses);
+		socket.emit(66,keyPresses);	//66 clientKeyPress
 		// console.log(keyPresses);
 		draw();
 		
@@ -91,7 +91,7 @@ var imageNumTiles = 10;  // The number of tiles per row in the tileset image
    }
 }
 
-socket.on('newPositions',function(data){
+socket.on(2,function(data){	//2 serverNewPositions
 	//console.log(data);
 	
 	
@@ -105,19 +105,19 @@ socket.on('newPositions',function(data){
 		player.draw(ctx,femaleSpriteSheet);
 		
 	});//data.forEach(
-});//socket.on('newPositions',
+});//socket.on(2,
     
  
     
     
-    socket.on("addToChat",function(data){
+    socket.on(3,function(data){	//3 addToChat
         chatText.innerHTML += '<div>' + data + '</div>';
         chatText.scrollTop = chatText.scrollHeight;
     });
-     socket.on("evalAnswer",function(data){
+     socket.on(4,function(data){	//4 serverEvalAnswer
         console.log(data);
     });
-    socket.on("worldUpdate",function(data){
+    socket.on(1,function(data){	//1 serverWorldUpdate
     loaded = true;
       world = data;
       //console.log(data);
@@ -127,24 +127,24 @@ socket.on('newPositions',function(data){
     chatForm.onsubmit = function(e){
     e.preventDefault();
     if(chatInput.value[0]==='/'){
-        socket.emit('evalServer',chatInput.value.slice(1));
+        socket.emit(66,chatInput.value.slice(1));	//66 evalServer
         }else{
-    socket.emit('sendMsgToServer',chatInput.value);
+    socket.emit(67,chatInput.value);	//67 sendMsgToServer
     chatInput.value = '';
     }
         chatInput.blur();
 
     }
-    document.onkeydown = function(event){	//0L, 1R, 2U, 3D
+    document.onkeydown = function(event){	//0U, 1D, 2L, 3R
     if(!chatFocused){
 		if(event.keyCode == 68)	//Left/right exclusive
-			keyPresses[1] = true;
+			keyPresses = keyPresses | 8;
 		else if(event.keyCode == 65)
-			keyPresses[0] = true;
+			keyPresses = keyPresses | 4;
 		if(event.keyCode == 83)	//Up/down exclusive
-			keyPresses[3] = true;
+			keyPresses = keyPresses | 2;
 		else if(event.keyCode == 87)
-			keyPresses[2] = true;
+			keyPresses = keyPresses | 1;
 		
         }//if(!chatFocused){
 	}//function(event){
@@ -152,13 +152,13 @@ socket.on('newPositions',function(data){
     document.onkeyup = function(event){
 	if(!chatFocused){
 		if(event.keyCode == 68)
-			keyPresses[1] = false;
+			keyPresses = keyPresses & 07;
 		else if(event.keyCode == 65)
-			keyPresses[0] = false;
+			keyPresses = keyPresses & 11;
 		if(event.keyCode == 83)
-			keyPresses[3] = false;
+			keyPresses = keyPresses & 13;
 		else if(event.keyCode == 87)
-			keyPresses[2] = false;
+			keyPresses = keyPresses & 14;
 		}//if(!ChatFocused){ 
 	}//function(event){
 	
