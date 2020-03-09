@@ -3,7 +3,7 @@ An MMO game for frens.
 
 
 ## Protocol guide
-### Server octoword (0-63):
+### Server quadword (0-63):
 0. Reserved, none
 1. serverWorldUpdate, data = map object for player
 2. serverNewPositions, data = array of Player objects
@@ -12,7 +12,7 @@ An MMO game for frens.
 5.
 6.
 7.
-### Client octoword (64-128):
+### Client quadword (64-128):
 64. Reserved, none
 65. clientRequestWorld, data = unused
 66. clientKeyPress, data = byte of key press positions, bit 0 = up, bit 1 = down, bit 2 = left, bit 3 = right
